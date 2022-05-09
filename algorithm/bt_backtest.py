@@ -72,8 +72,9 @@ class rf_strategy(bt.Strategy):
                 self.cancel(o)
             # 重置订单列表
             self.order_list = []
+            date_key = pd.date_range(start=date, end=date + relativedelta(months=1), freq='m')[0].strftime('%Y-%m-%d')
             try:
-                long_list = port[date.strftime('%Y-%m-%d')]
+                long_list = port[date_key]
             except:
                 long_list = []
             # 若上期股票未出现在本期交易列表中，则平仓
@@ -283,7 +284,7 @@ def bt_of_port(port_name, bt_start, bt_end):
     ret_df = pd.DataFrame({'datetime': ret.keys(), 'ret': ret.values()})
     ret_df.set_index('datetime', inplace=True)
     val_df = value_cal(startcash, ret_df)
-    # val_df.to_csv(os.path.join(addpath.data_path, 'strategy_temps', 'pv_'+port_name+'.csv'))
+    val_df.to_csv(os.path.join(addpath.data_path, 'strategy_temps', 'pv_'+port_name+'.csv'))
 
     performance_mat = pMatrix.p_matrix(val_df, freq='D', start=bt_start, end=bt_end, exchange='CN')
     print(port_name)
@@ -298,7 +299,7 @@ if __name__ == '__main__':
     ts = datetime.datetime.now()
 
     bt_start = '2011-12-31'
-    bt_end = '2021-11-30'
+    bt_end = '2021-12-31'
     port_list = ['rf_ind_port_1', 'rf_ind_port_2', 'rf_ind_port_3', 'rf_ind_port_4', 'rf_ind_port_5',
                  'rf_port_1', 'rf_port_2', 'rf_port_3', 'rf_port_4', 'rf_port_5',
                  'xgb_ind_port_1', 'xgb_ind_port_2', 'xgb_ind_port_3', 'xgb_ind_port_4', 'xgb_ind_port_5',
